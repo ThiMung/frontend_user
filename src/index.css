@@ -8,6 +8,12 @@
   --peach-hover: #fdeee6;
 
   font-family: 'Inter', system-ui, sans-serif;
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
 body {
@@ -31,4 +37,8 @@ body {
 
 .font-serif {
   font-family: 'Libre Baskerville', Georgia, serif;
+}
+* {
+  box-sizing: border-box;
+}
 }
