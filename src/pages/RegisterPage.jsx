@@ -33,7 +33,7 @@ const RegisterPage = () => {
 
     try {
       // Gọi API Laravel Backend trực tiếp qua shared Axios instance (Không dùng Service Pattern rườm rà)
-      const response = await api.post('/register', formData); 
+      const response = await api.post('/attendee/register', formData); 
       
       // Hiển thị thông báo đăng ký thành công bằng Tiếng Anh thông qua thư viện Hot-Toast
       toast.success('Registration successful! Welcome to EventHub.', {
@@ -77,11 +77,11 @@ const RegisterPage = () => {
           <h1 className="text-3xl font-black text-gray-900 tracking-tight">EventHub</h1>
           <div className="flex items-center gap-2 mt-2">
             <span className="h-px w-8 bg-gray-300"></span>
-            <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">Organizer Portal</p>
+            <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">Attendee Portal</p>
             <span className="h-px w-8 bg-gray-300"></span>
           </div>
           <p className="text-gray-400 text-sm text-center mt-3 leading-relaxed">
-            Create your organizer account to start managing community events.
+            Create your attendee account to start participating in community events.
           </p>
         </div>
 
