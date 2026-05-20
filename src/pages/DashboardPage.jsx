@@ -1,4 +1,3 @@
-import React from 'react';
 import { authStore } from '../store/authStore';
 
 const DashboardPage = () => {

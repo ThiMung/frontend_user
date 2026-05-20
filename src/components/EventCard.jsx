@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Users, CalendarDays } from 'lucide-react';
 import { formatCategoryLabel } from '../utils/categoryLabels';
@@ -15,6 +14,7 @@ const StarRating = ({ rating }) => {
                 return (
                     <svg
                         key={i}
+                        aria-hidden="true"
                         className={`w-4 h-4 ${filled ? 'text-[#F5A623]' : 'text-gray-200'}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"

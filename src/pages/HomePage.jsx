@@ -1,8 +1,23 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { eventService } from '../services/eventService';
 import EventCard from '../components/EventCard';
 import CategorySidebar from '../components/CategorySidebar';
+
+const buildEventParams = (category, searchText) => {
+    const params = {};
+    const keyword = searchText.trim();
+
+    if (category !== 'all') {
+        params.category = category;
+    }
+
+    if (keyword) {
+        params.search = keyword;
+    }
+
+    return params;
+};
 
 const HomePage = () => {
     const [events, setEvents] = useState([]);
@@ -12,34 +27,52 @@ const HomePage = () => {
     const [searchInput, setSearchInput] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
 
-    const fetchEvents = useCallback(() => {
-        setLoading(true);
-        const params = {};
-        if (selectedCategory !== 'all') params.category = selectedCategory;
-        if (search.trim()) params.search = search.trim();
+    useEffect(() => {
+        let isMounted = true;
 
         eventService
-            .getAllEvents(params)
+            .getAllEvents(buildEventParams(selectedCategory, search))
             .then((data) => {
+                if (!isMounted) return;
+
                 const payload = data?.events ? data : { events: Array.isArray(data) ? data : [], categories: [] };
+
                 setEvents(payload.events || []);
                 setCategories(payload.categories || []);
             })
             .catch((error) => {
+                if (!isMounted) return;
+
                 console.error('Failed to load events:', error);
                 setEvents([]);
                 setCategories([]);
             })
-            .finally(() => setLoading(false));
-    }, [selectedCategory, search]);
+            .finally(() => {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            });
 
-    useEffect(() => {
-        fetchEvents();
-    }, [fetchEvents]);
+        return () => {
+            isMounted = false;
+        };
+    }, [selectedCategory, search]);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        setSearch(searchInput);
+        const keyword = searchInput.trim();
+
+        if (keyword !== search) {
+            setLoading(true);
+            setSearch(keyword);
+        }
+    };
+
+    const handleCategorySelect = (category) => {
+        if (category !== selectedCategory) {
+            setLoading(true);
+            setSelectedCategory(category);
+        }
     };
 
     return (
@@ -73,7 +106,7 @@ const HomePage = () => {
                     <CategorySidebar
                         categories={categories}
                         selectedCategory={selectedCategory}
-                        onSelectCategory={setSelectedCategory}
+                        onSelectCategory={handleCategorySelect}
                     />
 
                     <div className="flex-1 min-w-0">
@@ -93,8 +126,8 @@ const HomePage = () => {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                                {events.map((ev) => (
-                                    <EventCard key={ev.id} event={ev} />
+                                {events.map((event) => (
+                                    <EventCard key={event.id} event={event} />
                                 ))}
                             </div>
                         )}
