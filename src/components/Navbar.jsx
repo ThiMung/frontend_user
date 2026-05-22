@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import { authStore } from '../store/authStore';

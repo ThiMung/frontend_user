@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { eventService } from '../services/eventService';
 
@@ -9,10 +9,31 @@ const EventDetailPage = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        eventService.getEventById(id)
-            .then((data) => setEvent(data))
-            .catch(() => setError('Không tải được thông tin sự kiện'))
-            .finally(() => setLoading(false));
+        let isMounted = true;
+
+        const loadEvent = async () => {
+            try {
+                const data = await eventService.getEventById(id);
+
+                if (isMounted) {
+                    setEvent(data);
+                }
+            } catch {
+                if (isMounted) {
+                    setError('Không tải được thông tin sự kiện');
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        loadEvent();
+
+        return () => {
+            isMounted = false;
+        };
     }, [id]);
 
     if (loading) {
