@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import { authStore } from '../store/authStore';
+import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const { user, logout } = authStore();
@@ -40,6 +41,7 @@ const Navbar = () => {
         <div className="flex items-center gap-3 shrink-0">
           {user ? (
             <>
+              <NotificationBell user={user} />
               <span className="hidden sm:inline text-sm text-gray-500">
                 Hi, {user.name}
               </span>
