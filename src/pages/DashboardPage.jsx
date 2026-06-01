@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authStore } from '../store/authStore';
 import { eventService } from '../services/eventService';
 
 const DashboardPage = () => {
     const user = authStore((s) => s.user);
+    const navigate = useNavigate();
 
     const [registrations, setRegistrations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -113,32 +115,52 @@ const DashboardPage = () => {
                                     <span
                                         className={`px-3 py-1 rounded-full text-xs font-semibold
                                         ${
-                                            registration.status === 'confirmed'
+                                            registration.event?.status === 'ended'
+                                                ? 'bg-gray-100 text-gray-600'
+                                                : registration.status === 'confirmed'
                                                 ? 'bg-green-100 text-green-700'
                                                 : 'bg-yellow-100 text-yellow-700'
                                         }`}
                                     >
-                                        {registration.status}
+                                        {registration.event?.status === 'ended'
+                                            ? 'Concluded'
+                                            : registration.status}
                                     </span>
 
-                                    {/* Cancel button */}
-                                    <button
-                                        onClick={() =>
-                                            handleCancel(
+                                    {/* Action button - Review or Cancel */}
+                                    {registration.event?.status === 'ended' ? (
+                                        <button
+                                            onClick={() => {
+                                                const eventId = registration.event?.id || registration.event_id;
+                                                if (!eventId) {
+                                                    alert('Unable to navigate: missing event ID.');
+                                                    return;
+                                                }
+                                                navigate(`/events/${eventId}`);
+                                            }}
+                                            className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition"
+                                        >
+                                            Review Now
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() =>
+                                                handleCancel(
+                                                    registration.event?.id
+                                                )
+                                            }
+                                            disabled={
+                                                cancellingId ===
                                                 registration.event?.id
-                                            )
-                                        }
-                                        disabled={
-                                            cancellingId ===
+                                            }
+                                            className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                        >
+                                            {cancellingId ===
                                             registration.event?.id
-                                        }
-                                        className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                    >
-                                        {cancellingId ===
-                                        registration.event?.id
-                                            ? 'Cancelling...'
-                                            : 'Cancel Registration'}
-                                    </button>
+                                                ? 'Cancelling...'
+                                                : 'Cancel Registration'}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>

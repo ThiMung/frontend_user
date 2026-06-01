@@ -29,4 +29,8 @@ export const eventService = {
 
     return response.data;
   },
+  addEventReview: async (eventId, reviewData) => {
+        const response = await api.post(`/attendee/events/${eventId}/reviews`, reviewData);
+        return response.data;
+    }
 };
